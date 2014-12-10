@@ -63,7 +63,7 @@ function LineGraph(id,properties){
 		that.drawAxes();
 		that.drawGrid();
 		that.writeLabels();
-		that.context.save();
+		//that.context.save();
 		that.context.translate(that.margin,that.canvas.height-that.margin);
 		that.newSize=(that.yIncrement/that.yStep);
 		that.context.lineWidth=that.newSize;
@@ -77,7 +77,7 @@ function LineGraph(id,properties){
 		else{
 			that.plotData(that.data,that.color);
 		}
-		that.context.restore();
+		//that.context.restore();
 	}
 	this.drawAxes=function(){
 		that.context.strokeStyle="rgb(0,0,0)";
@@ -116,7 +116,7 @@ function LineGraph(id,properties){
 		}
 		
 		//y labels
-		for(var i=0;i<that.yDivisions;i++){
+		for(var i=0;i<=that.yDivisions;i++){
 			var yLabel=that.minVal+i*that.yIncrement;
 			that.context.fillText(yLabel,(that.margin/2),that.canvas.height-that.margin-i*that.yStep);
 		}
