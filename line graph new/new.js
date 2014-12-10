@@ -2,7 +2,10 @@
 function LineGraph(id,properties){
 	this.canvas;
 	this.context;
-	this.data=properties.data;
+	this.type=properties.type;
+	this.color=properties.colors?properties.colors:"rgb(51,102,255)";
+	this.data=[];
+	this.noOfLines;
 	this.xLabel=properties.xLabel;
 	this.maxVal;
 	this.minVal;
@@ -13,12 +16,47 @@ function LineGraph(id,properties){
 	this.yIncrement;
 	var that=this;
 	
+	this.findMax=function(){
+		var max=[];
+		for(var i=0;i<that.noOfLines;i++){
+			for(var j=0;j<that.data[i].length;j++){
+				max[i]=Math.max.apply(Math,that.data[i]);
+			}
+		}
+		return(Math.max.apply(Math,max));
+	}
+	
+	this.findMin=function(){
+		var min=[];
+		for(var i=0;i<that.noOfLines;i++){
+			for(var j=0;j<that.data[i].length;j++){
+				min[i]=Math.min.apply(Math,that.data[i]);
+			}
+		}
+		return(Math.min.apply(Math,min));
+	}
 	
 	this.init=function(){
+		if (that.type[0]=="multiple"){
+			that.noOfLines=that.type[1];
+			for(var i=0;i<that.noOfLines;i++){
+					that.data[i]=properties.data[i];
+			}
+		that.maxVal=that.findMax();
+		that.minVal=that.findMin();
+		console.log(that.minVal);	
+		}
+		
+		else if(that.type[0]=="single"){
+			that.noOfLines=1;
+			that.data=properties.data;
+			console.log(that.data);
+			that.maxVal=Math.max.apply(Math,that.data);
+			that.minVal=Math.min.apply(Math,that.data);
+		}
+			
 		that.canvas=document.getElementById(id);
 		that.context=that.canvas.getContext("2d");
-		that.maxVal=Math.max.apply(Math,that.data);
-		that.minVal=Math.min.apply(Math,that.data);
 		that.xStep=(that.canvas.width-2*that.margin)/(that.xLabel.length-1);
 		that.yIncrement=Math.ceil((that.maxVal-that.minVal)/that.yDivisions);
 		that.yStep=(that.canvas.height-2*that.margin)/that.yDivisions;
@@ -27,11 +65,18 @@ function LineGraph(id,properties){
 		that.writeLabels();
 		that.context.save();
 		that.context.translate(that.margin,that.canvas.height-that.margin);
-		that.newSize=(that.yIncrement/that.yStep)*2;
+		that.newSize=(that.yIncrement/that.yStep);
 		that.context.lineWidth=that.newSize;
 		that.context.scale(1,-1*(that.yStep/that.yIncrement));
 		console.log(that.yStep/that.yIncrement);
-		that.plotData();
+		if(that.noOfLines>1){
+			for(var i=0;i<that.noOfLines;i++){
+				that.plotData(that.data[i],that.color[i]);
+			}
+		}
+		else{
+			that.plotData(that.data,that.color);
+		}
 		that.context.restore();
 	}
 	this.drawAxes=function(){
@@ -76,11 +121,15 @@ function LineGraph(id,properties){
 			that.context.fillText(yLabel,(that.margin/2),that.canvas.height-that.margin-i*that.yStep);
 		}
 	}
-	this.plotData=function(){
+	this.plotData=function(data,color){
+		that.context.strokeStyle=color;
+		console.log(color);
 		that.context.beginPath();
-		that.context.moveTo(0, that.data[0]-that.minVal);
-		for (i=1;i<that.data.length;i++) {
-			that.context.lineTo(i * that.xStep,that.data[i]-that.minVal);
+		that.context.moveTo(0, data[0]-that.minVal);
+		that.context.arc(0, data[0]-that.minVal,2,0,2*Math.PI);
+		for (i=1;i<data.length;i++) {
+			that.context.arc(i * that.xStep, data[i]-that.minVal,2,0,2*Math.PI);
+			that.context.lineTo(i * that.xStep,data[i]-that.minVal);
 		}
 		that.context.stroke();
 	}
@@ -88,6 +137,7 @@ function LineGraph(id,properties){
 
 var lineGraph=new LineGraph("linegraph",
 							{
+								type:["single",1],
 								data:[100, 102, 87, 89, 100,200,5],
 								xLabel:["2001", "2002","2003","2004","2005","2006","2007"],
 							});
