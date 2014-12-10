@@ -14,6 +14,8 @@ function LineGraph(id,properties){
 	this.xStep;
 	this.yStep;
 	this.yIncrement;
+	this.newSize;
+	this.snapShot;
 	var that=this;
 	
 	this.findMax=function(){
@@ -63,7 +65,7 @@ function LineGraph(id,properties){
 		that.drawAxes();
 		that.drawGrid();
 		that.writeLabels();
-		//that.context.save();
+		that.context.save();
 		that.context.translate(that.margin,that.canvas.height-that.margin);
 		that.newSize=(that.yIncrement/that.yStep);
 		that.context.lineWidth=that.newSize;
@@ -77,7 +79,10 @@ function LineGraph(id,properties){
 		else{
 			that.plotData(that.data,that.color);
 		}
-		//that.context.restore();
+		that.context.restore();
+		window.addEventListener('mousedown', that.draw, false);
+		window.addEventListener("mouseup",that.restoreCanvas,false);
+		
 	}
 	this.drawAxes=function(){
 		that.context.strokeStyle="rgb(0,0,0)";
@@ -133,6 +138,49 @@ function LineGraph(id,properties){
 		}
 		that.context.stroke();
 	}
+	
+	this.getMousePos=function(canvas, evt) {
+    	var rect = canvas.getBoundingClientRect();
+    	return {
+      		x: evt.clientX - rect.left,
+      		y: evt.clientY - rect.top
+    	};
+	}
+	this.draw=function(e){
+    	var pos = that.getMousePos(that.canvas, e);
+    	var posx = (pos.x-that.margin);
+    	var posy = (that.canvas.height-that.margin-pos.y)*that.newSize;
+		var graphPosX=(posx/that.xStep);
+		var dataNo=Math.round(posx/that.xStep);
+		var graphPosY=Math.round(posy);
+		//var snapShot;
+		//that.context.save();
+		if( graphPosX>=(dataNo-0.3) && graphPosX<=(dataNo+0.3) && graphPosY<=(that.data[dataNo]+5) && graphPosY>=(that.data[dataNo]-5)){
+			var text="(" + that.xLabel[dataNo] + "," + that.data[dataNo] + ")";
+			var textPos={
+							x:posx,
+							y:graphPosY+(200*that.newSize)
+			}
+			
+			that.snapShot=that.context.getImageData(0,0,that.canvas.width,that.canvas.height);
+			that.context.fillText(text,textPos.x,textPos.y);
+			//that.context.clearRect(0,0,that.canvas.width,that.canvas.height);
+			//that.context.putImageData(snapShot,0,0);
+			//console.log(that.data[dataNo],that.xLabel[dataNo]);
+		}
+		//that.context.clearRect(0,0,that.canvas.width,that.canvas.height);
+		//that.context.putImageData(snapShot,0,0);
+
+		
+		//that.context.restore();
+		//that.context.fillStyle = "#000000";
+    	//that.context.fillRect (posx, posy, 4, 4);
+	}
+	this.restoreCanvas=function(){
+		that.context.clearRect(0,0,that.canvas.width,that.canvas.height);
+		that.context.putImageData(that.snapShot,0,0);
+	}
+	
 }
 
 var lineGraph=new LineGraph("linegraph",
