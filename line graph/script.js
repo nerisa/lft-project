@@ -164,17 +164,8 @@ function LineGraph(id,properties){
 			
 			that.snapShot=that.context.getImageData(0,0,that.canvas.width,that.canvas.height);
 			that.context.fillText(text,textPos.x,textPos.y);
-			//that.context.clearRect(0,0,that.canvas.width,that.canvas.height);
-			//that.context.putImageData(snapShot,0,0);
-			//console.log(that.data[dataNo],that.xLabel[dataNo]);
 		}
-		//that.context.clearRect(0,0,that.canvas.width,that.canvas.height);
-		//that.context.putImageData(snapShot,0,0);
-
 		
-		//that.context.restore();
-		//that.context.fillStyle = "#000000";
-    	//that.context.fillRect (posx, posy, 4, 4);
 	}
 	this.restoreCanvas=function(){
 		that.context.clearRect(0,0,that.canvas.width,that.canvas.height);
