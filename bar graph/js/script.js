@@ -3,15 +3,15 @@
 function BarGraph(id,properties){
 	this.canvas=document.getElementById(id);
 	this.data=properties.data;
-	this.colors="rgba(0,255,0,0.8)";
+	this.selfColors;
+	this.colors;
 	this.label=properties.label;
 	this.labelX=properties.labelX;
 	this.labelY=properties.labelY;
 	this.barWidth
 	this.margin=40;
 	this.yStep;
-	this.xStep;
-	this.yDivisions=10;
+	this.xStep;	this.yDivisions=10;
 	this.yIncrement;
 	this.graphHeight;
 	this.graphLength;
@@ -21,6 +21,24 @@ function BarGraph(id,properties){
 	var that=this;
 	
 	this.init=function(){
+		if(properties.colors){
+			that.colors=properties.colors;
+			that.selfColors="true";
+		}
+		else{
+			that.selfColors="false";
+			if(properties.theme=="blue"){
+				that.colors='rgba(0,51,255,0.5)';
+			}
+			else if(properties.theme=="red"){
+				that.colors='rgba(153,0,0,0.8)';
+			}
+			else{
+				that.colors='rgba(102,102,102,0.5)';
+			}
+		}
+				
+			
 		that.graphLength=that.canvas.width-2*that.margin;
 		that.xStep=that.graphLength/that.data.length;
 		console.log(that.xStep);
@@ -64,7 +82,12 @@ function BarGraph(id,properties){
 							x:that.xStep/4+i*that.xStep,
 							y:0
 						};
-			that.drawOneBar(barStart,barHeight,that.colors);
+			if(that.selfColors=="true"){
+				that.drawOneBar(barStart,barHeight,that.colors[i]);
+			}
+			else{
+				that.drawOneBar(barStart,barHeight,that.colors);
+			}
 		}
 		
 	}
@@ -109,15 +132,21 @@ function BarGraph(id,properties){
 	
 	
 	this.writeAxes=function(){
+		var fontSize=Math.floor(that.canvas.height/40);
+		context.font=fontSize+"pt Helvetica";
+		context.fillStyle="#000000"
 		var xPos={
 					x:that.margin+that.graphLength/2-that.labelX.length/2,
 					y:that.canvas.height-that.margin/4
 		}
-		context.fillStyle="#F00"
+		
 		context.fillText(that.labelX,xPos.x,xPos.y);
 		
-		//context.rotate(-Math.PI/2);
-		//context.fillText("hello",100,0,200);
+		context.save();
+		context.translate(Math.ceil(that.margin/3),that.canvas.height/2+that.labelY.length)
+		context.rotate(Math.PI * -90/180);
+		context.fillText(that.labelY,0,0);
+		context.restore();
 	}
 	
 	this.getMousePos=function(canvas, evt) {
@@ -139,10 +168,10 @@ function BarGraph(id,properties){
 		var text="(" + that.label[dataNo] + "," + that.data[dataNo] + ")";
 		var textPos={
 							x:posx,
-							y:that.data[dataNo]
+							y:pos.y
 					}
 		that.snapShot=context.getImageData(0,0,that.canvas.width,that.canvas.height);
-		context.fillStyle="#006600"
+		context.fillStyle="#000000"
 		var fontSize=Math.floor(that.canvas.height/30);
 		context.font=fontSize+"pt Helvetica";
 		console.log(text);
@@ -160,7 +189,8 @@ function BarGraph(id,properties){
 var barGraph=new BarGraph("bargraph",
 						  {
 							  data:[5,6,10,2,6,3,2],
-							  colors:["#ff0045","#ff6700","#fffb00","#ff0230","#ff0080","#ffbb00","#ff0aa0"],
+							  theme:"red",
+							 // colors:["#ff0045","#ff6700","#fffb00","#ff0230","#ff0080","#ffbb00","#ff0aa0"],
 							  label:["2005","2006","2007","2008","2006","2007","2008"],
 							  labelX:"Years",
 							  labelY:"No. of persons"
