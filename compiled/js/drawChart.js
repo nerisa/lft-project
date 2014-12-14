@@ -1,5 +1,5 @@
 // JavaScript Document
-/*var newChart=new Chart("bargraph","bargraph",
+var newChart=new Chart("chart","bargraph",
 						  {
 							   data:[[5,6],[12,10],[13,2],[8,4],[5,6],[4,6],[7,8]],
 							  theme:"blue",
@@ -12,9 +12,9 @@
 							  labelY:"No. of persons"
 						  }
 						  );
-newChart.init();*/
+newChart.init();
 
-/*var pieChart = new Chart( "bargraph", "piechart",
+/*var pieChart = new Chart( "chart", "piechart",
 		{
 			data: [40, 250, 70,45,67],
 			labels: ["23%", "69.6%", "17.4%","bla","bla","bla"],
@@ -23,10 +23,10 @@ newChart.init();*/
 	);
 pieChart.init();*/
 
-var lineGraph=new Chart("bargraph","linegraph",
+/*var lineGraph=new Chart("chart","linegraph",
 							{
 								type:["single",1],
 								data:[100, 102, 87, 89, 100,200,5],
 								xLabel:["2001", "2002","2003","2004","2005","2006","2007"],
 							});
-lineGraph.init();
+lineGraph.init();*/
